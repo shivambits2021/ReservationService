@@ -7,8 +7,10 @@
     </a>
     <a href="https://www.postgresql.org/">
         <img src="https://img.shields.io/badge/PostgreSQL-316192?logo=postgresql&logoColor=white" alt="PostgreSQL">
+    </a>
+</div>
 
-<br />
+<br/>
 
 # 🛒 Real-Time Product Reservation System
 
@@ -78,4 +80,3 @@ product_reservation/
 │
 ├── requirements.txt
 └── README.md
-```
