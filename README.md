@@ -80,3 +80,52 @@ product_reservation/
 │
 ├── requirements.txt
 └── README.md
+
+## ⚙️ Requirements
+- [Python 3.11](https://www.python.org/downloads/release/python-3110/)
+
+## 🔌 Run Locally
+
+Prerequisite installations
+- python3.9 or higher
+- virtual environment (venv)
+
+Clone the project
+
+```bash
+  git clone https://github.com/shivambits2021/ReservationService.git
+```
+
+Create virtual environment
+
+```bash
+  virtualenv venv
+```
+
+Activate venv in linux
+
+```bash
+  source venv/bin/activate
+```
+
+Activate venv in windows
+
+```bash
+  venv\Scripts\activate
+```
+
+Install dependencies
+
+```bash
+  pip3 install -r requirements.txt
+```
+
+Start the server
+
+```bash
+  uvicorn app.main:app
+```
+
+## 👷 Authors
+
+- [Shivam Pratap](https://www.linkedin.com/in/shivam-p-64a17615a)
