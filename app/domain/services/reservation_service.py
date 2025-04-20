@@ -3,10 +3,11 @@ from datetime import datetime, timedelta
 import pytz
 from app.repositories.product_repository import ProductRepository
 from app.repositories.reservation_repository import ReservationRepository
-from app.schemas.reservation import ReservationCreate, ReservationResponse
+from app.schemas.reservation import ReservationCreate, ReservationResponse,ReservationStatus
 from app.domain.models.reservation import Reservation
 from app.domain.models.product import Product
 from sqlalchemy import select
+from fastapi import HTTPException
 
 class ReservationService:
     def __init__(
@@ -20,6 +21,7 @@ class ReservationService:
         self.reservation_repo = reservation_repo
 
     async def reserve_product(self, data: ReservationCreate) -> ReservationResponse:
+        
         """Reserve a product for a customer."""
         product = await self.product_repo.get_product_by_id(data.product_id)
         if not product:
@@ -92,3 +94,19 @@ class ReservationService:
         except Exception as e:
             await self.db.rollback()
             raise e
+        
+        
+    async def cancel_reservation(self, reservation_id: int):
+        reservation = await self.reservation_repo.get_reservation_by_id(reservation_id)
+        if not reservation:
+            raise HTTPException(status_code=404, detail="Reservation not found")
+
+        if reservation.status != ReservationStatus.PENDING:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Cannot cancel reservation with status '{reservation.status}'"
+            )
+
+        await self.product_repo.update_product_stock(reservation.product_id, reservation.quantity)
+        await self.reservation_repo.cancel_reservation(reservation)
+        return reservation

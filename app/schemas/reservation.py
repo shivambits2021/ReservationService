@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from enum import Enum
 
 class ReservationCreate(BaseModel):
     product_id: int
@@ -12,6 +13,13 @@ class ReservationResponse(BaseModel):
     quantity: int
     status: str
     expires_at: datetime
+    
+class ReservationStatus(str, Enum):
+    PENDING = "pending"
+    CONFIRMED = "confirmed"
+    CANCELLED = "cancelled"
+    EXPIRED = "expired"
+
 
     class Config:
         orm_mode = True  # Enables SQLAlchemy model conversion

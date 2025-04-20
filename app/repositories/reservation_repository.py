@@ -2,6 +2,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.domain.models.reservation import Reservation
 from sqlalchemy.orm import selectinload
+from app.schemas.reservation import ReservationStatus
+from datetime import datetime
 
 class ReservationRepository:
     def __init__(self, db: AsyncSession):
@@ -31,5 +33,12 @@ class ReservationRepository:
         """Delete a reservation by its ID."""
         reservation = await self.get_reservation_by_id(reservation_id)
         if reservation:
-            await self.db.delete(reservation)  # Delete asynchronously
-            await self.db.commit()  # Commit asynchronously
+            await self.db.delete(reservation)
+            await self.db.commit()
+            
+    async def cancel_reservation(self, reservation: Reservation):
+        reservation.status = ReservationStatus.CANCELLED
+        reservation.updated_at = datetime.utcnow()  # Update timestamp
+        await self.db.commit()
+        await self.db.refresh(reservation)
+        return reservation

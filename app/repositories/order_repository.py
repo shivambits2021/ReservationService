@@ -83,3 +83,12 @@ class OrderRepository:
         except Exception as e:
             await self.db.rollback()  # Rollback in case of error
             raise e
+        
+    
+    async def restore_stock(self, product_id: int, quantity: int):
+        product = await self.get_by_id(product_id)
+        if product:
+            product.stock += quantity
+            await self.db.commit()
+            await self.db.refresh(product)
+        return product
