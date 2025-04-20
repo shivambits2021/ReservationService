@@ -1,15 +1,17 @@
-import asyncpg
 import asyncio
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text
+from app.db.session import get_db
 
-async def test_connection():
-    try:
-        # Attempt to connect to the PostgreSQL database using asyncpg
-        conn = await asyncpg.connect('postgresql://postgres:Bits2019%40%21@localhost:5432/reservation')
+async def test_db_connection():
+    # Using the async generator to get a database session
+    async for db in get_db():
         print("Connection successful!")
-        await conn.close()
-    except Exception as e:
-        print(f"Failed to connect: {e}")
+        # Example: Execute a simple query using text()
+        result = await db.execute(text('SELECT 1'))
+        print("Query result:", result.fetchall())  # This should return [(1,)]
+        break
 
-# Run the test function
-loop = asyncio.get_event_loop()
-loop.run_until_complete(test_connection())
+# Run the test function asynchronously
+if __name__ == "__main__":
+    asyncio.run(test_db_connection())

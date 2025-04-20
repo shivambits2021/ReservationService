@@ -1,19 +1,17 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from typing import AsyncGenerator
+from app.core.config import settings
+from sqlalchemy.orm import declarative_base
 
-from sqlalchemy.orm import sessionmaker
+Base = declarative_base()
 
-from core.config import settings
+# Create the asynchronous engine
+engine = create_async_engine("postgresql+asyncpg://postgres:Bits2019%40%21@127.0.0.1:5432/reservation", echo=True)
 
+# Create the asynchronous sessionmaker
+AsyncSessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False)
 
-engine = create_async_engine(settings.DATABASE_URL,echo=True)
-
-
-AsyncSessionLocal = sessionmaker(
-    bind=engine,
-    class_=AsyncSession,
-    expire_on_commit=False
-)
-
-async def get_db():
-    async with AsyncSessionLocal as session:
+# Dependency to get the database session
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    async with AsyncSessionLocal() as session:
         yield session

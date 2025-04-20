@@ -1,15 +1,15 @@
-import urllib.parse
 from pydantic_settings import BaseSettings
+from urllib.parse import unquote
 
 class Settings(BaseSettings):
-    DATABASE_URL: str
-    DEBUG :bool
+    RAW_DATABASE_URL: str
+    DEBUG: bool
 
-    def get_database_url(self):
-        return urllib.parse.unquote(self.DATABASE_URL)
+    @property
+    def DATABASE_URL(self) -> str:
+        return unquote(self.RAW_DATABASE_URL)
 
     class Config:
         env_file = ".env"
 
 settings = Settings()
-settings.DATABASE_URL = settings.get_database_url()
